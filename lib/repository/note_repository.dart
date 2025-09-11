@@ -15,13 +15,20 @@ class NoteRepositoryImpl implements INoteRepository {
 
   @override
   Future<bool> save(Note note) async {
+    final db = await dbService.openDb();
     try {
-      final db = await dbService.openDb();
-      int response = await db.insert('note', note.toMap());
+      // int response = await db.insert('note', note.toMap());
+      int response = await db.transaction((txn) async {
+         int id  = await txn.rawInsert('INSERT INTO notes(name) VALUES ("${note.name}")');
+         return id;
+      });
+
       int hasConflict = 0;
       return response != hasConflict;
     } catch (ex) {
       throw InsertErrorException();
+    } finally {
+      await db.close();
     }
   }
 }

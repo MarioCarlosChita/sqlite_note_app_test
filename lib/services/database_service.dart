@@ -22,7 +22,7 @@ class DatabaseService {
       path,
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE note(id INTEGER PRIMARY KEY, name TEXT)',
+          'CREATE TABLE notes(id INTEGER PRIMARY KEY, name TEXT)',
         );
       },
       version: 1,
