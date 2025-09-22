@@ -17,10 +17,11 @@ class NoteRepositoryImpl implements INoteRepository {
   Future<bool> save(Note note) async {
     final db = await dbService.openDb();
     try {
-      // int response = await db.insert('note', note.toMap());
       int response = await db.transaction((txn) async {
-         int id  = await txn.rawInsert('INSERT INTO notes(name) VALUES ("${note.name}")');
-         return id;
+        int id = await txn.rawInsert(
+          'INSERT INTO notes(name) VALUES ("${note.name}")',
+        );
+        return id;
       });
 
       int hasConflict = 0;
@@ -33,9 +34,19 @@ class NoteRepositoryImpl implements INoteRepository {
   }
 
   @override
-  Future<List<Note>> notes() {
-     try{
-
-     }
+  Future<List<Note>> notes() async {
+    final db = await dbService.openDb();
+    List<Note> notes = [];
+    try {
+      await db.transaction((txn) async {
+        List<DataMap> notes = await txn.rawQuery('Select * FROM notes');
+        notes = List.from(notes.map((note) => Note.fromJson(note)));
+      });
+      return notes;
+    } catch (ex) {
+      throw QueryErrorException(message: ex.toString());
+    } finally {
+      await db.close();
+    }
   }
 }
