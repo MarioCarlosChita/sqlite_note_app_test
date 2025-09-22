@@ -6,7 +6,7 @@ import '../model/note.dart';
 abstract class INoteRepository {
   Future<bool> save(Note note);
 
-  // Future<List<Note>> notes();
+  Future<List<Note>> notes();
 }
 
 class NoteRepositoryImpl implements INoteRepository {
@@ -26,9 +26,16 @@ class NoteRepositoryImpl implements INoteRepository {
       int hasConflict = 0;
       return response != hasConflict;
     } catch (ex) {
-      throw InsertErrorException();
+      throw InsertErrorException(message: ex.toString());
     } finally {
       await db.close();
     }
+  }
+
+  @override
+  Future<List<Note>> notes() {
+     try{
+
+     }
   }
 }

@@ -21,7 +21,7 @@ class DatabaseService {
     return openDatabase(
       path,
       onCreate: (db, version) {
-        return db.execute(
+        db.execute(
           'CREATE TABLE notes(id INTEGER PRIMARY KEY, name TEXT)',
         );
       },
